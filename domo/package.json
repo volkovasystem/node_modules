@@ -1,0 +1,38 @@
+{
+  "name": "domo",
+  "version": "0.5.9",
+  "description": "Markup, style, and code in one language.",
+  "main": "lib/index.js",
+  "browserify": "lib/domo.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jed/domo.git"
+  },
+  "keywords": [
+    "dom",
+    "html",
+    "css",
+    "template",
+    "browser",
+    "server"
+  ],
+  "author": {
+    "name": "Jed Schmidt",
+    "email": "tr@nslator.jp"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "uglify-js": "~1.3.4",
+    "coffee-script": "~1.4.0"
+  },
+  "scripts": {
+    "build": "node build.js"
+  },
+  "readme": "dōmo: Markup, style, and code in one language\n=============================================\n\ndōmo lets you write HTML markup CSS styles in JavaScript syntax, in the browser and on the server. At **less than 1.4kb** of minizipped JavaScript, dōmo is a simpler, easier, and more reliable alternative to template engines and CSS pre-processors. And it works well with all the tools you already use, from jQuery to Backbone.js to CoffeeScript.\n\nTo learn more about dōmo, head over to [the documentation](http://domo-js.com).\n",
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/jed/domo/issues"
+  },
+  "_id": "domo@0.5.9",
+  "_from": "domo@x.x.x"
+}
