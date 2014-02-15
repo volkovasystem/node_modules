@@ -146,9 +146,9 @@ after packing it up into a tarball (b).
 
     Examples:
 
-          git+ssh://git@github.com:isaacs/npm.git#v1.0.27
-          git+https://isaacs@github.com/isaacs/npm.git
-          git://github.com/isaacs/npm.git#v1.0.27
+          git+ssh://git@github.com:npm/npm.git#v1.0.27
+          git+https://isaacs@github.com/npm/npm.git
+          git://github.com/npm/npm.git#v1.0.27
 
 You may combine multiple arguments, and even multiple types of arguments.
 For example:
@@ -172,6 +172,9 @@ local space in some cases.
 
 The `--no-bin-links` argument will prevent npm from creating symlinks for
 any binaries the package might contain.
+
+The `--no-optional` argument will prevent optional dependencies from
+being installed.
 
 The `--no-shrinkwrap` argument, which will ignore an available
 shrinkwrap file and use the package.json instead.

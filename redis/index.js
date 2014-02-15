@@ -147,9 +147,7 @@ RedisClient.prototype.flush_and_error = function (message) {
             try {
                 command_obj.callback(error);
             } catch (callback_err) {
-                process.nextTick(function () {
-                    throw callback_err;
-                });
+                this.emit("error", callback_err);
             }
         }
     }
@@ -161,9 +159,7 @@ RedisClient.prototype.flush_and_error = function (message) {
             try {
                 command_obj.callback(error);
             } catch (callback_err) {
-                process.nextTick(function () {
-                    throw callback_err;
-                });
+                this.emit("error", callback_err);
             }
         }
     }
@@ -229,6 +225,8 @@ RedisClient.prototype.do_auth = function () {
 
         // now we are really connected
         self.emit("connect");
+        self.initialize_retry_vars();
+
         if (self.options.no_ready_check) {
             self.on_ready();
         } else {
@@ -245,11 +243,9 @@ RedisClient.prototype.on_connect = function () {
 
     this.connected = true;
     this.ready = false;
-    this.attempts = 0;
     this.connections += 1;
     this.command_queue = new Queue();
     this.emitted_end = false;
-    this.initialize_retry_vars();
     if (this.options.socket_nodelay) {
         this.stream.setNoDelay();
     }
@@ -261,6 +257,7 @@ RedisClient.prototype.on_connect = function () {
         this.do_auth();
     } else {
         this.emit("connect");
+        this.initialize_retry_vars();
 
         if (this.options.no_ready_check) {
             this.on_ready();
@@ -558,24 +555,18 @@ RedisClient.prototype.return_error = function (err) {
         try {
             command_obj.callback(err);
         } catch (callback_err) {
-            // if a callback throws an exception, re-throw it on a new stack so the parser can keep going
-            process.nextTick(function () {
-                throw callback_err;
-            });
+            this.emit("error", callback_err);
         }
     } else {
         console.log("node_redis: no callback to send error: " + err.message);
-        // this will probably not make it anywhere useful, but we might as well throw
-        process.nextTick(function () {
-            throw err;
-        });
+        this.emit("error", err);
     }
 };
 
 // if a callback throws an exception, re-throw it on a new stack so the parser can keep going.
 // if a domain is active, emit the error on the domain, which will serve the same function.
 // put this try/catch in its own function because V8 doesn't optimize this well yet.
-function try_callback(callback, reply) {
+function try_callback(client, callback, reply) {
     try {
         callback(null, reply);
     } catch (err) {
@@ -583,9 +574,7 @@ function try_callback(callback, reply) {
             process.domain.emit('error', err);
             process.domain.exit();
         } else {
-            process.nextTick(function () {
-                throw err;
-            });
+            client.emit("error", err);
         }
     }
 }
@@ -667,7 +656,7 @@ RedisClient.prototype.return_reply = function (reply) {
                 reply = reply_to_object(reply);
             }
 
-            try_callback(command_obj.callback, reply);
+            try_callback(this, command_obj.callback, reply);
         } else if (exports.debug_mode) {
             console.log("no callback for reply: " + (reply && reply.toString && reply.toString()));
         }
@@ -693,7 +682,7 @@ RedisClient.prototype.return_reply = function (reply) {
                 // reply[1] can be null
                 var reply1String = (reply[1] === null) ? null : reply[1].toString();
                 if (command_obj && typeof command_obj.callback === "function") {
-                    try_callback(command_obj.callback, reply1String);
+                    try_callback(this, command_obj.callback, reply1String);
                 }
                 this.emit(type, reply1String, reply[2]); // channel, count
             } else {
@@ -1033,8 +1022,15 @@ RedisClient.prototype.hmset = function (args, callback) {
         callback = null;
     }
 
-    if (args.length === 2 && typeof args[0] === "string" && typeof args[1] === "object") {
+    if (args.length === 2 && (typeof args[0] === "string" || typeof args[0] === "number") && typeof args[1] === "object") {
         // User does: client.hmset(key, {key1: val1, key2: val2})
+        // assuming key is a string, i.e. email address
+
+        // if key is a number, i.e. timestamp, convert to string
+        if (typeof args[0] === "number") {
+            args[0] = args[0].toString();
+        }
+
         tmp_args = [ args[0] ];
         tmp_keys = Object.keys(args[1]);
         for (i = 0, il = tmp_keys.length; i < il ; i++) {
@@ -1100,7 +1096,6 @@ Multi.prototype.exec = function (callback) {
                 } else {
                     errors.push(new Error(err));
                 }
-                self.queue.splice(index, 1);
             }
         });
     }, this);

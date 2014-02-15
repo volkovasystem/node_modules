@@ -21,8 +21,8 @@ cache folders:
 1. urls: http!/server.com/path/to/thing
 2. c:\path\to\thing: file!/c!/path/to/thing
 3. /path/to/thing: file!/path/to/thing
-4. git@ private: git_github.com!isaacs/npm
-5. git://public: git!/github.com/isaacs/npm
+4. git@ private: git_github.com!npm/npm
+5. git://public: git!/github.com/npm/npm
 6. git+blah:// git-blah!/server.com/foo/bar
 
 adding a folder:
@@ -83,6 +83,7 @@ var mkdir = require("mkdirp")
   , chmodr = require("chmodr")
   , which = require("which")
   , isGitUrl = require("./utils/is-git-url.js")
+  , pathIsInside = require("path-is-inside")
 
 cache.usage = "npm cache add <tarball file>"
             + "\nnpm cache add <folder>"
@@ -286,6 +287,10 @@ function fetchAndShaCheck (u, tmp, shasum, cb) {
     if (!shasum) return cb(null, response)
     // validate that the url we just downloaded matches the expected shasum.
     sha.check(tmp, shasum, function (er) {
+      if (er != null && er.message) {
+        // add original filename for better debuggability
+        er.message = er.message + '\n' + 'From:     ' + u
+      }
       return cb(er, response, shasum)
     })
   })
@@ -503,8 +508,29 @@ function archiveGitRemote (p, u, co, origUrl, cb) {
     }
     log.verbose("git fetch -a origin ("+u+")", stdout)
     tmp = path.join(npm.tmp, Date.now()+"-"+Math.random(), "tmp.tgz")
-    resolveHead()
+    verifyOwnership()
   })
+
+  function verifyOwnership() {
+    if (process.platform === "win32") {
+      log.silly("verifyOwnership", "skipping for windows")
+      resolveHead()
+    } else {
+      getCacheStat(function(er, cs) {
+        if (er) {
+          log.error("Could not get cache stat")
+          return cb(er)
+        }
+        chownr(p, cs.uid, cs.gid, function(er) {
+          if (er) {
+            log.error("Failed to change folder ownership under npm cache for %s", p)
+            return cb(er)
+          }
+          resolveHead()
+        })
+      })
+    }
+  }
 
   function resolveHead () {
     exec(git, resolve, {cwd: p, env: env}, function (er, stdout, stderr) {
@@ -518,7 +544,7 @@ function archiveGitRemote (p, u, co, origUrl, cb) {
       parsed.hash = stdout
       resolved = url.format(parsed)
 
-      // https://github.com/isaacs/npm/issues/3224
+      // https://github.com/npm/npm/issues/3224
       // node incorrectly sticks a / at the start of the path
       // We know that the host won't change, so split and detect this
       var spo = origUrl.split(parsed.host)
@@ -564,7 +590,7 @@ function gitEnv () {
   if (gitEnv_) return gitEnv_
   gitEnv_ = {}
   for (var k in process.env) {
-    if (!~['GIT_PROXY_COMMAND','GIT_SSH'].indexOf(k) && k.match(/^GIT/)) continue
+    if (!~['GIT_PROXY_COMMAND','GIT_SSH','GIT_SSL_NO_VERIFY'].indexOf(k) && k.match(/^GIT/)) continue
     gitEnv_[k] = process.env[k]
   }
   return gitEnv_
@@ -872,10 +898,10 @@ function addLocalTarball (p, name, shasum, cb_) {
   if (typeof cb_ !== "function") cb_ = name, name = ""
   // if it's a tar, and not in place,
   // then unzip to .tmp, add the tmp folder, and clean up tmp
-  if (p.indexOf(npm.tmp) === 0)
+  if (pathIsInside(p, npm.tmp))
     return addTmpTarball(p, name, shasum, cb_)
 
-  if (p.indexOf(npm.cache) === 0) {
+  if (pathIsInside(p, npm.cache)) {
     if (path.basename(p) !== "package.tgz") return cb_(new Error(
       "Not a valid cache tarball name: "+p))
     return addPlacedTarball(p, name, shasum, cb_)
@@ -1117,7 +1143,7 @@ function addLocalDirectory (p, name, shasum, cb) {
   if (typeof cb !== "function") cb = name, name = ""
   // if it's a folder, then read the package.json,
   // tar it to the proper place, and add the cache tar
-  if (p.indexOf(npm.cache) === 0) return cb(new Error(
+  if (pathIsInside(p, npm.cache)) return cb(new Error(
     "Adding a cache directory to the cache will make the world implode."))
   readJson(path.join(p, "package.json"), false, function (er, data) {
     er = needName(er, data)
@@ -1135,8 +1161,8 @@ function addLocalDirectory (p, name, shasum, cb) {
       mkdir(path.dirname(tgz), function (er, made) {
         if (er) return cb(er)
 
-        var fancy = p.indexOf(npm.tmp) !== 0
-                    && p.indexOf(npm.cache) !== 0
+        var fancy = !pathIsInside(p, npm.tmp)
+                    && !pathIsInside(p, npm.cache)
         tar.pack(tgz, p, data, fancy, function (er) {
           if (er) {
             log.error( "addLocalDirectory", "Could not pack %j to %j"

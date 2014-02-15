@@ -114,7 +114,7 @@ easily by doing `npm view npm contributors`.
 If you would like to contribute, but don't know what to work on, check
 the issues list or ask on the mailing list.
 
-* <http://github.com/isaacs/npm/issues>
+* <http://github.com/npm/npm/issues>
 * <npm-@googlegroups.com>
 
 ## BUGS
@@ -122,7 +122,7 @@ the issues list or ask on the mailing list.
 When you find issues, please report them:
 
 * web:
-  <http://github.com/isaacs/npm/issues>
+  <http://github.com/npm/npm/issues>
 * email:
   <npm-@googlegroups.com>
 
@@ -131,10 +131,6 @@ as expected.  The `npm-debug.log` file is also helpful to provide.
 
 You can also look for isaacs in #node.js on irc://irc.freenode.net.  He
 will no doubt tell you to put the output in a gist or email.
-
-## HISTORY
-
-See npm-changelog(1)
 
 ## AUTHOR
 
