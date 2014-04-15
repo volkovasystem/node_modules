@@ -30,7 +30,7 @@ module.exports = function(grunt) {
       package_path = false,
       downloadDone = [],
       options = this.options({
-          version: '0.8.4',
+          version: '0.9.2',
           app_name: null,
           app_version: null,
           build_dir: null, // Path where
@@ -40,7 +40,7 @@ module.exports = function(grunt) {
           linux32: false,
           linux64: false,
           mac_icns: false,
-          download_url: 'https://s3.amazonaws.com/node-webkit/',
+          download_url: 'http://dl.node-webkit.org/',
           timestamped_builds: false,
           credits: false,
           keep_nw: false,
@@ -129,6 +129,7 @@ module.exports = function(grunt) {
       downloadDone.push(compress.generateZip(buildFiles, releaseFile));
     }
 
+    var indicator = new download.ProgressIndicator(grunt);
 
     // Download and unzip / untar the needed files
     webkitFiles.forEach(function(plattform) {
@@ -149,7 +150,7 @@ module.exports = function(grunt) {
         }
 
         // Download files
-        downloadDone.push(download.downloadAndUnpack(plattform));
+        downloadDone.push(download.downloadAndUnpack(plattform, indicator));
       }
     });
 

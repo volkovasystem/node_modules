@@ -1,6 +1,6 @@
 {
   "name": "redis",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "description": "Redis client library",
   "keywords": [
     "redis",
@@ -28,10 +28,10 @@
   "bugs": {
     "url": "https://github.com/mranney/node_redis/issues"
   },
-  "_id": "redis@0.10.0",
+  "_id": "redis@0.10.1",
   "dist": {
-    "shasum": "aea483812271b34f8160287be6b237d6ba663366"
+    "shasum": "c79788630f89bd80b0551b3b502fe48c6b05c2ec"
   },
-  "_from": "redis@0.10.0",
-  "_resolved": "https://registry.npmjs.org/redis/-/redis-0.10.0.tgz"
+  "_from": "redis@0.10.1",
+  "_resolved": "https://registry.npmjs.org/redis/-/redis-0.10.1.tgz"
 }

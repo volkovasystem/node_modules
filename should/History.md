@@ -1,3 +1,25 @@
+3.3.0 / 2014-04-07
+==================
+
+ * Added .enumerable(name, val)
+
+3.2.0 / 2014-03-29
+==================
+
+ * Added first version of .any modifier that affect assertions with multiple parameters
+ * .header now have more nice message
+ * assertion can now override how to show object
+
+3.1.4 / 2014-03-18
+==================
+
+ * .Error now do not throw assertion error for custom errors.
+
+3.1.3 / 2014-02-25
+==================
+
+ * Fix TypeError in .containEql
+
 3.1.2 / 2014-01-28
 ==================
 
@@ -11,7 +33,7 @@
 3.1.0 / 2014-01-23
 ==================
 
- * Added jquery based broser extension
+ * Added jquery based browser extension
 
 3.0.1 / 2014-01-17
 ==================

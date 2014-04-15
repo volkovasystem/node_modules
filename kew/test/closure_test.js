@@ -1,4 +1,14 @@
-// java -jar ../../../third_party/closure-compiler/compiler.jar --language_in ECMASCRIPT5_STRICT --warning_level VERBOSE --compilation_level ADVANCED_OPTIMIZATIONS --externs ../../../login/externs_node.js --jscomp_error missingProperties --jscomp_error checkTypes kew.js kew_bad.js
+/**
+ * @fileoverview A sample file to test type-checking
+ */
+
+var kew = require('../kew')
+var Promise = kew.Promise
+var all = kew.all
+var allSettled = kew.allSettled
+var fcall = kew.fcall
+var nfcall = kew.nfcall
+var bindPromise = kew.bindPromise
 
 /**
 @param {Array} result
@@ -65,6 +75,19 @@ var exampleAll = function () {
   // good
   var promise = all([]);
   all([new Promise(), new Promise()]);
+};
+
+var exampleAllSettled = function () {
+  allSettled([]);
+  allSettled([5, {}, null, 'string']);
+  var promise = allSettled([new Promise()]);
+  promise.then(function(results){});
+};
+
+var exampleTimeout = function () {
+  var promise = new Promise();
+  var timeoutPromise = promise.timeout(50);
+  timeoutPromise.then(function(result){});
 };
 
 var noArgsFunction = function () {};

@@ -163,7 +163,9 @@ exports.testDelay = function (test) {
   var startTime = Date.now()
 
   Q.resolve(val)
-    .then(Q.delay.bind(Q, 1000))
+    .then(function (v) {
+      return Q.delay(v, 1000)
+    })
     .then(function (returnVal) {
       test.equal(returnVal, val, "Val should be passed through")
       test.equal(Date.now() - startTime >= 1000, true, "Should have waited a second")
@@ -185,6 +187,23 @@ exports.testFcall = function (test) {
       test.done()
     })
   test.ok(!calledYet, "fcall() should delay function invocation until next tick")
+}
+
+// test fcall
+exports.testFcallError = function (test) {
+  var error = function () {
+    throw new Error('my error')
+  }
+
+  Q.fcall(error)
+    .then(function (val) {
+      test.fail('fcall should throw exception')
+    }, function (err) {
+      test.equal('my error', err.message)
+    })
+    .then(function () {
+      test.done()
+    })
 }
 
 // test fcall works when fn returns a promise
@@ -231,6 +250,23 @@ exports.testNfcallErrors = function (test) {
   Q.nfcall(nodeStyleFailer, 2, 3)
     .fail(function (e) {
       test.equal(e, err, "Promise successfully failed")
+      test.done()
+    })
+}
+
+// test fcall
+exports.testNFcallErrorSync = function (test) {
+  var error = function () {
+    throw new Error('my error')
+  }
+
+  Q.nfcall(error)
+    .then(function (val) {
+      test.fail('nfcall should throw exception')
+    }, function (err) {
+      test.equal('my error', err.message)
+    })
+    .then(function () {
       test.done()
     })
 }

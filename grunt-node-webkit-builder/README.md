@@ -24,7 +24,7 @@ grunt.loadNpmTasks('grunt-node-webkit-builder');
 
 #### options.version
 Type: `String`
-Default value: `'0.8.4'`
+Default value: `'0.9.2'`
 
 The version of node-webkit you want to use. [Here is a list](https://github.com/rogerwang/node-webkit/wiki/Downloads-of-old-versions) of all available releases
 
@@ -104,7 +104,7 @@ This will keep the zipped .nw file in the releases folder
 
 #### options.download_url
 Type: `String`
-Default value: `https://s3.amazonaws.com/node-webkit/`
+Default value: `http://dl.node-webkit.org/`
 
 The URL where the prebuilt binaries are. Only change this if you know what you are doing
 
@@ -126,7 +126,7 @@ grunt.initConfig({
         linux32: false, // We don't need linux32
         linux64: false // We don't need linux64
     },
-    src: ['./example/public/**/*'] // Your node-wekit app
+    src: ['./example/public/**/*'] // Your node-webkit app
   },
 })
 ```
