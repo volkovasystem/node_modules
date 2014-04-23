@@ -1,0 +1,53 @@
+{
+  "name": "hostile",
+  "description": "Simple /etc/hosts manipulation",
+  "version": "0.6.0",
+  "author": {
+    "name": "Feross Aboukhadijeh",
+    "email": "feross@feross.org",
+    "url": "http://feross.org/"
+  },
+  "bin": {
+    "hostile": "bin/cmd.js"
+  },
+  "bugs": {
+    "url": "https://github.com/feross/hostile/issues"
+  },
+  "dependencies": {
+    "chalk": "^0.4.0",
+    "commander": "~2.2.0",
+    "omelette": "~0.1.0",
+    "split": "~0.3.0",
+    "through": "~2.3.4",
+    "once": "^1.3.0"
+  },
+  "devDependencies": {
+    "tape": "^2.12.3"
+  },
+  "homepage": "https://github.com/feross/hostile",
+  "keywords": [
+    "/etc/hosts",
+    "hosts file",
+    "hostname",
+    "etc hosts",
+    "change hosts"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "preferGlobal": "true",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/feross/hostile"
+  },
+  "scripts": {
+    "test": "tape test/*.js"
+  },
+  "readme": "# hostile [![travis](http://img.shields.io/travis/feross/hostile.svg)](https://travis-ci.org/feross/hostile) [![npm](http://img.shields.io/npm/v/hostile.svg)](https://npmjs.org/package/hostile) [![gittip](http://img.shields.io/gittip/feross.svg)](https://www.gittip.com/feross/)\n\n#### Simple, programmatic `/etc/hosts` manipulation (in node.js)\n\n![hostile](https://raw.github.com/feross/hostile/master/img.png)\n\n## install\n\n```bash\nnpm install hostile\n```\n\n## usage\n\nIf you use OS X or Linux, this module assumes your hosts file is at `/etc/hosts`. On\nWindows, it assumes your hosts file is at `C:/Windows/System32/drivers/etc/hosts`.\n\n**Commands that modify the hosts file require root privileges.**\n\n#### list all host file records\n\n```bash\nhostile list\n```\n\n#### set a domain in the hosts file\n\n```bash\nhostile set [ip] [host]\n```\n\nexamples:\n```bash\nhostile set localhost domain.com\nhostile set 192.168.33.10 domain.com\n```\n\n#### remove a domain from the hosts file\n\n```bash\nhostile remove [host]\n```\n\nexample:\n```bash\nhostile remove domain.com\n```\n\n#### set up auto completion\n\nbash:\n```bash\nhostile --completion >> ~/hostile.completion.sh\necho 'source ~/hostile.completion.sh' >> .bash_profile\n```\n\nzsh:\n```bash\necho '. <(./hostile --completion)' >> .zshrc\n```\n\n## methods\n\nCommands that modify the hosts file require root privileges.\n\nI wouldn't recommend running your production node server with admin privileges unless you\ndowngrade to a normal user with\n[`process.setuid(id)`](http://nodejs.org/api/process.html#process_process_setuid_id)\nbefore you start accepting requests.\n\n#### add a rule to /etc/hosts\n\n```js\nvar hostile = require('hostile')\nhostile.set('127.0.0.1', 'peercdn.com', function (err) {\n  if (err) {\n    console.error(err)\n  } else {\n    console.log('set /etc/hosts successfully!')\n  }\n})\n```\n\nIf the rule already exists, then this does nothing.\n\n#### remove a rule from /etc/hosts\n\n```js\nhostile.remove('127.0.0.1', 'peercdn.com', function (err) {\n  if (err) {\n    console.error(err)\n  } else {\n    console.log('set /etc/hosts successfully!')\n  }\n})\n```\n\nIf the rule does not exist, then this does nothing.\n\n#### get all lines in /etc/hosts\n\n```js\n// If `preserveFormatting` is true, then include comments, blank lines and other\n// non-host entries in the result\nvar preserveFormatting = false\n\nhostile.get(preserveFormatting, function (err, lines) {\n  if (err) {\n    console.error(err.message)\n  }\n  lines.forEach(function (line) {\n    console.log(line)\n  })\n})\n```\n\n## contributors\n\n- [Feross Aboukhadijeh](http://feross.org) (author)\n- [Maayan Glikser](https://github.com/morsdyce)\n\n## license\n\nMIT. Copyright (c) [Feross Aboukhadijeh](http://feross.org).\n",
+  "readmeFilename": "README.md",
+  "_id": "hostile@0.6.0",
+  "dist": {
+    "shasum": "ed2aeefeab1d84b93d06852b3fece20095190fb2"
+  },
+  "_from": "hostile@x.x.x",
+  "_resolved": "https://registry.npmjs.org/hostile/-/hostile-0.6.0.tgz"
+}
