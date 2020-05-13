@@ -185,7 +185,7 @@
   },
   "dependencies": {
     "bson": "0.2.7",
-    "kerberos": "0.0.3"
+    "kerberos": "1.0.0"
   },
   "devDependencies": {
     "dox": "0.4.4",
