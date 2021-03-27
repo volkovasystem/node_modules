@@ -52,7 +52,7 @@
     "async": "~0.2.9",
     "lazystream": "~0.1.0",
     "lodash": "~2.4.1",
-    "plist": "~0.4.3",
+    "plist": "~3.0.2",
     "q": "~1.0.0",
     "request": "~2.33.0",
     "request-progress": "~0.3.1",
