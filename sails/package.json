@@ -37,7 +37,7 @@
     "connect-redis": "1.4.5",
     "connect-mongo": "0.3.2",
     "async": "0.2.9",
-    "winston": "0.7.1",
+    "winston": "0.8.0",
     "i18n": "0.4.1",
     "optimist": "0.3.4",
     "fs-extra": "0.5.0",
